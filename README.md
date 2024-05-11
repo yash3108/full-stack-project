@@ -113,3 +113,6 @@ The folder structure of this app is explained below:
 - https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 - https://medium.com/@shanmorton/install-python-and-boto3-on-an-aws-ec2-instance-e8e40d92160f
 - https://allardqjy.medium.com/using-pre-signed-urls-to-upload-files-to-amazon-s3-from-reactjs-5b15c94b66df
+- https://medium.com/how-to-react/how-to-upload-files-on-an-s3-bucket-in-react-js-97a3ccd519d1
+- https://www.youtube.com/watch?v=XEHvmxldc-E
+- https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-config
