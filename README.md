@@ -1,70 +1,114 @@
-# Getting Started with Create React App
+# Full-Stack Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Pre-requisites
+- react 18.3.1
+- axios 1.6.8
+- uuid 9.0.1
 
-## Available Scripts
+## App Start
+- git clone
+```
+git clone https://github.com/yash3108/
+```
 
-In the project directory, you can run:
+- Install dependencies
+```
+cd <project_name> 
+npm install
+```
 
-### `npm start`
+- Build and run the project
+```
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Design Decisions
+- Made use of "uuid" in the input file name while uploading to S3 bucket. This helps overcome issue of overwriting file due to same file name.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Made use of "nanoid" in the output file name while uploading to S3 bucket. This helps mark uniqueness of the output file and also resolves issue of overwriting of files due to same file name.
 
-### `npm test`
+## Workflow
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![app_workflow](Screenshots/app_worflow.png)
 
-### `npm run build`
+1. Device sends request for Presiged URL for S3 bucket object via API Gateway. Lambda function (getPresignedFileURL) generates the URL and sends it to the device.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Using the Presigned URL, file is uploaded to the S3 bucket.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. All the device inputs are sent to Lambda function (uploadToFileTable) via API Gateway. This Lambda function inserts the input data in DynamoDB table.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. This INSERT event triggers a Lambda function (runScript) creating an EC2 instance and executing script (script.py) obtained from S3 bucket.
 
-### `npm run eject`
+5. This script processes the input text and file content from DynamoDB table and creates a new file and uplaods this output file into S3 bucket and terminates the instance.   
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Note: All the Lambda functions were created and uploaded via zip file to the AWS console.\
+Also created and assigned appropriate IAM roles for Lambda functions, EC2 instance, etc. 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Tech Stack
+- React
+- AWS
+    - S3
+    - DynamoDB
+    - Lambda
+    - EC2
+    - API Gateway
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Project Structure
+The folder structure of this app is explained below:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+| Name | Description |
+|-------------------------------|----------------------------------------|
+| **lambda_functions** | Contains code for all the AWS lamda functions                         |
+| *lambda_functions/getPresignedFileURL* | Contains code for lambda function to get presigned URL |
+| *lambda_functions/uploadToFileTable* | Contains code for lambda function to insert data into DynamoDB table |
+| *lambda_functions/runScript* | Contains code for lambda function to launch VM (EC2) instance on DynamoDB event and run script |
+| **public** | Contains the public page styling and images to be served |
+| **src** | Contains code for React app |
+| package.json | Contains npm dependencies as well as build scripts  |
+| script.py | Script to be run on EC2 instance
 
-## Learn More
+## Demo
+### Video
+![Video](Video\Demo Video.mp4)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Screenshots
+#### Before Execution:
+- S3 Bucket
+![before_bucket](Screenshots/before_bucket.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- DynamoDB Table
+![before_dynamobd](Screenshots/before_dynamodb.png)
 
-### Code Splitting
+- EC2 Instances
+![before_ec2](Screenshots/before_ec2.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### During Execution:
+- React App
+![react_app](Screenshots/react_app.png)
 
-### Analyzing the Bundle Size
+- S3 Bucket
+![during_bucket](Screenshots/during_bucket.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- DynamoDB Table
+![during_table](Screenshots/during_table.png)
 
-### Making a Progressive Web App
+- EC2 Instances
+![during_ec2](Screenshots/during_ec2.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### After Execution:
+- S3 Bucket
+![after_bucket](Screenshots/after_bucket.png)
 
-### Advanced Configuration
+- DynamoDB Table
+![after_table](Screenshots/after_table.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- EC2 Instances
+![after_ec2](Screenshots/after_ec2.png)
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## References
+- https://www.pluralsight.com/resources/blog/guides/how-to-use-a-simple-form-submit-with-files-in-react
+- https://aws.amazon.com/blogs/compute/uploading-to-amazon-s3-directly-from-a-web-or-mobile-application/
+- https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2/client/run_instances.html
+- https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
+- https://medium.com/@shanmorton/install-python-and-boto3-on-an-aws-ec2-instance-e8e40d92160f
+- https://allardqjy.medium.com/using-pre-signed-urls-to-upload-files-to-amazon-s3-from-reactjs-5b15c94b66df
