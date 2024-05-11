@@ -8,7 +8,7 @@
 ## App Start
 - git clone
 ```
-git clone https://github.com/yash3108/
+git clone https://github.com/yash3108/full-stack-project.git
 ```
 
 - Install dependencies
@@ -64,12 +64,13 @@ The folder structure of this app is explained below:
 | *lambda_functions/runScript* | Contains code for lambda function to launch VM (EC2) instance on DynamoDB event and run script |
 | **public** | Contains the public page styling and images to be served |
 | **src** | Contains code for React app |
+| **Video**| Contains demo video of execution |
 | package.json | Contains npm dependencies as well as build scripts  |
 | script.py | Script to be run on EC2 instance
 
 ## Demo
-### Video
-![Video](Video\Demo Video.mp4)
+
+**Note:** Video demonstration can be found in 'Video' folder.
 
 ### Screenshots
 #### Before Execution:
